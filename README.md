@@ -142,5 +142,7 @@ Issues and PRs welcome. See [`CLAUDE.md`](CLAUDE.md) for repo conventions.
 ---
 
 🤖 Built for the Google TPU Sprint Q1 2026.
-- GCP Credits were provided for this project
+## Google Cloud credits are provided for this project.
+<br>
+
 #TPUSprint
