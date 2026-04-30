@@ -54,15 +54,15 @@ Open http://localhost:3000.
 # Generate a code-completion dataset locally with Ollama
 python scripts/generate_dataset.py --domain code --rows 500 --out data/code.jsonl
 
-# Fine-tune Gemma-2-2B with LoRA on Cloud TPU v5e-4
-python scripts/finetune_tpu.py --model google/gemma-2-2b --data data/code.jsonl
+# Fine-tune Gemma 4 E2B with LoRA on Cloud TPU v5e-4
+python scripts/finetune_tpu.py --model google/gemma-4-E2B-it --data data/code.jsonl
 
 # Same, on a single GPU
-python scripts/finetune_gpu.py --model google/gemma-2-2b --data data/code.jsonl
+python scripts/finetune_gpu.py --model google/gemma-4-E2B-it --data data/code.jsonl
 
 # Benchmark inference with vLLM
-python scripts/benchmark_vllm.py --model checkpoints/gemma-2-2b-code-tpu --hardware tpu
-python scripts/benchmark_vllm.py --model checkpoints/gemma-2-2b-code-gpu --hardware gpu
+python scripts/benchmark_vllm.py --model checkpoints/gemma-4-e2b-code-tpu --hardware tpu
+python scripts/benchmark_vllm.py --model checkpoints/gemma-4-e2b-code-gpu --hardware gpu
 ```
 
 Results land in `benchmarks/results/*.json`. Compare with:

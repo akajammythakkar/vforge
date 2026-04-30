@@ -170,7 +170,7 @@ Fill in:
 
 | Field | Recommended value |
 |---|---|
-| Base model | `google/gemma-2-2b` (fits on free Colab) |
+| Base model | `google/gemma-4-E2B-it` (fits on free Colab) |
 | Hardware | TPU v5e-4 (for Sprint) or GPU |
 | Method | LoRA |
 | LoRA rank | 8 |
@@ -188,7 +188,7 @@ Click **Create run**. vForge immediately downloads a `.ipynb` file.
 The notebook:
 - Installs `keras`, `keras-hub`, `jax[tpu]`
 - Sets `KERAS_BACKEND=jax` before any import
-- Loads `gemma2_2b_en` from keras-hub preset
+- Loads `gemma4_instruct_2b` from keras-hub preset
 - Calls `backbone.enable_lora(rank=8)`
 - Shards across all 4 TPU chips via `keras.distribution.DataParallel`
 - Saves `lora.weights.h5` and `metrics.json` to your Drive
@@ -278,14 +278,14 @@ python scripts/generate_dataset.py \
 
 # 2. Fine-tune on TPU (run this in a Colab TPU runtime)
 python scripts/finetune_tpu.py \
-  --model google/gemma-2-2b \
+  --model google/gemma-4-E2B-it \
   --data data/code.jsonl \
   --rank 8 \
   --epochs 1
 
 # 3. Fine-tune on GPU (run this in a Colab GPU or local CUDA machine)
 python scripts/finetune_gpu.py \
-  --model google/gemma-2-2b \
+  --model google/gemma-4-E2B-it \
   --data data/code.jsonl \
   --rank 8 \
   --epochs 1

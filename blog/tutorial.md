@@ -11,7 +11,7 @@ We built [vForge](https://github.com/) for this Sprint. It's an open-source plat
 
 ## TL;DR
 
-| Metric (Gemma-2-2B, LoRA r=8, 1 epoch, 200 rows × 512 tokens) | Cloud TPU v5e-4 | NVIDIA L4 (24 GB) | Notes |
+| Metric (Gemma 4 E2B, LoRA r=8, 1 epoch, 200 rows × 512 tokens) | Cloud TPU v5e-4 | NVIDIA L4 (24 GB) | Notes |
 |---|---|---|---|
 | Train time (s) | _fill in_ | _fill in_ | wall-clock end-to-end |
 | Approx. train tokens/sec | _fill in_ | _fill in_ | rows × seq × epochs / time |
@@ -29,7 +29,7 @@ We built [vForge](https://github.com/) for this Sprint. It's an open-source plat
 
 The Sprint asks a focused question: *for a typical LoRA fine-tune of a small open model (2B–9B), how does TPU v5e compare to a single consumer GPU?* That's the question most teams actually face when they're not at GPT-scale.
 
-**Why Gemma-2-2B?** It fits on free-tier hardware on both sides (Colab TPU and a single L4/T4), so anyone can reproduce the numbers. Gemma is also first-class in `keras_hub` — the LoRA path is two lines.
+**Why Gemma 4 E2B?** It fits on free-tier hardware on both sides (Colab TPU and a single L4/T4), so anyone can reproduce the numbers. Gemma is also first-class in `keras_hub` — the LoRA path is two lines.
 
 **Why LoRA r=8?** It's the most common adapter rank in production today, and it pushes only ~0.1% of the parameters during training, which makes both sides memory-feasible.
 
@@ -69,7 +69,7 @@ keras.distribution.set_distribution(
     keras.distribution.DataParallel(devices=devices)
 )
 
-causal = keras_hub.models.CausalLM.from_preset("gemma2_2b_en")
+causal = keras_hub.models.CausalLM.from_preset("gemma4_instruct_2b")
 causal.backbone.enable_lora(rank=8)
 causal.compile(
     optimizer=keras.optimizers.AdamW(learning_rate=1e-4, weight_decay=0.01),
@@ -98,7 +98,7 @@ from peft import LoraConfig, get_peft_model
 from transformers import Trainer, TrainingArguments
 
 model = AutoModelForCausalLM.from_pretrained(
-    "google/gemma-2-2b", torch_dtype=torch.bfloat16, device_map="auto"
+    "google/gemma-4-E2B-it", torch_dtype=torch.bfloat16, device_map="auto"
 )
 model = get_peft_model(model, LoraConfig(
     r=8, lora_alpha=16, lora_dropout=0.05, bias="none",
@@ -173,8 +173,8 @@ Open http://localhost:3000, chat with vForge, generate a dataset.
 **Just the Sprint scripts (no UI):**
 ```bash
 python scripts/generate_dataset.py --domain code --rows 200 --out data/code.jsonl
-python scripts/finetune_tpu.py --model google/gemma-2-2b --data data/code.jsonl
-python scripts/finetune_gpu.py --model google/gemma-2-2b --data data/code.jsonl
+python scripts/finetune_tpu.py --model google/gemma-4-E2B-it --data data/code.jsonl
+python scripts/finetune_gpu.py --model google/gemma-4-E2B-it --data data/code.jsonl
 python scripts/benchmark_vllm.py --model out_tpu --hardware tpu
 python scripts/benchmark_vllm.py --model out_gpu --hardware gpu
 python benchmarks/analysis.py --output benchmarks/charts/

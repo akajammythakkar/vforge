@@ -28,7 +28,7 @@ class Settings(BaseSettings):
 
     default_generator_model: str = "llama3.1:8b"
     default_generator_provider: str = "ollama"
-    default_base_model: str = "google/gemma-2-2b"
+    default_base_model: str = "google/gemma-4-E2B-it"
 
     hf_token: str = ""
     hf_default_org: str = ""

@@ -31,11 +31,11 @@ const PROVIDERS = [
 ];
 
 const MODELS_BY_PROVIDER: Record<string, string[]> = {
-  ollama: ["llama3.1:8b", "qwen2.5:7b", "gemma2:9b", "mistral:7b"],
+  ollama: ["llama3.1:8b", "qwen2.5:7b", "gemma4:2b", "mistral:7b"],
   together: [
     "meta-llama/Llama-3.3-70B-Instruct-Turbo",
     "Qwen/Qwen2.5-72B-Instruct-Turbo",
-    "google/gemma-2-27b-it",
+    "google/gemma-4-26B-A4B-it",
   ],
   openai: ["gpt-4o-mini", "gpt-4o"],
   anthropic: ["claude-sonnet-4-6", "claude-haiku-4-5-20251001"],

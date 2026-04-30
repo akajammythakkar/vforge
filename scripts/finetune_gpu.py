@@ -5,7 +5,7 @@ Use this for the TPU-vs-GPU baseline.
 
 Usage:
     python scripts/finetune_gpu.py \\
-        --model google/gemma-2-2b \\
+        --model google/gemma-4-E2B-it \\
         --data data/code.jsonl \\
         --rank 8 --epochs 1 --batch-size 4 \\
         --lr 1e-4 --max-seq-len 1024 \\

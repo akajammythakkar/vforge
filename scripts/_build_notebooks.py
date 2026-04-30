@@ -122,7 +122,7 @@ write_nb(OUT / "01_dataset_generation.ipynb", nb1)
 # ── 02 — TPU fine-tune ─────────────────────────────────────
 nb2 = [
     md(
-        "# vForge — 02. Fine-tune Gemma-2-2B on Cloud TPU (LoRA, JAX/Keras 3.0)\n\n"
+        "# vForge — 02. Fine-tune Gemma 4 E2B on Cloud TPU (LoRA, JAX/Keras 3.0)\n\n"
         "Runs on **Colab → Runtime → Change runtime type → TPU v5e-1** (or any v5e).\n\n"
         "For the Sprint we run on **Cloud TPU v5e-4** via the GCP credits."
     ),
@@ -167,11 +167,11 @@ nb2 = [
         "if devices and any('tpu' in d.lower() for d in devices):\n"
         "    keras.distribution.set_distribution(keras.distribution.DataParallel(devices=devices))"
     ),
-    md("## 6. Load Gemma-2-2B with LoRA"),
+    md("## 6. Load Gemma 4 E2B with LoRA"),
     code(
         "import keras_hub, time\n"
         "t0 = time.time()\n"
-        "causal = keras_hub.models.CausalLM.from_preset('gemma2_2b_en')\n"
+        "causal = keras_hub.models.CausalLM.from_preset('gemma4_instruct_2b')\n"
         "print(f'load: {time.time()-t0:.1f}s')\n"
         "causal.backbone.enable_lora(rank=8)\n"
         "causal.preprocessor.sequence_length = 512  # bump for production\n"
@@ -188,7 +188,7 @@ nb2 = [
         "history = causal.fit(x=texts, batch_size=4, epochs=1, verbose=2)\n"
         "elapsed = time.time() - t0\n"
         "metrics = {\n"
-        "  'hardware':'tpu', 'base_model':'google/gemma-2-2b', 'rank':8,\n"
+        "  'hardware':'tpu', 'base_model':'google/gemma-4-E2B-it', 'rank':8,\n"
         "  'epochs':1, 'batch_size':4, 'dataset_rows': len(texts),\n"
         "  'train_time_sec': round(elapsed,2),\n"
         "  'final_loss': float(history.history['loss'][-1]),\n"
@@ -204,7 +204,7 @@ nb2 = [
         "Path('out_tpu/metrics.json').write_text(json.dumps(metrics, indent=2))\n"
         "# POST these to your vForge backend:\n"
         "# !curl -X POST $VFORGE/api/benchmarks/runs -H 'content-type: application/json' \\\n"
-        "#   -d '{\"name\":\"gemma-2-2b TPU\",\"hardware\":\"tpu_v5e\",\"benchmark_type\":\"training\", \"model\":\"google/gemma-2-2b\", \"metrics\": '\"$(cat out_tpu/metrics.json)\"'}'\n"
+        "#   -d '{\"name\":\"gemma-2-2b TPU\",\"hardware\":\"tpu_v5e\",\"benchmark_type\":\"training\", \"model\":\"google/gemma-4-E2B-it\", \"metrics\": '\"$(cat out_tpu/metrics.json)\"'}'\n"
     ),
     md(
         "## Next\n"
@@ -218,7 +218,7 @@ write_nb(OUT / "02_finetune_tpu.ipynb", nb2)
 # ── 03 — GPU fine-tune ─────────────────────────────────────
 nb3 = [
     md(
-        "# vForge — 03. Fine-tune Gemma-2-2B on GPU (LoRA, PyTorch + PEFT)\n\n"
+        "# vForge — 03. Fine-tune Gemma 4 E2B on GPU (LoRA, PyTorch + PEFT)\n\n"
         "GPU baseline for the TPU comparison. Colab → Runtime → T4 (free) or A100 / L4 (Pro)."
     ),
     md("## 1. Install"),
@@ -248,7 +248,7 @@ nb3 = [
     md("## 4. Tokenize"),
     code(
         "from transformers import AutoTokenizer\n"
-        "tok = AutoTokenizer.from_pretrained('google/gemma-2-2b')\n"
+        "tok = AutoTokenizer.from_pretrained('google/gemma-4-E2B-it')\n"
         "if tok.pad_token is None: tok.pad_token = tok.eos_token\n"
         "def t(b): return tok(b['text'], truncation=True, max_length=512, padding='max_length')\n"
         "ds = ds.map(t, batched=True, remove_columns=['text','instruction','input','output'])\n"
@@ -261,7 +261,7 @@ nb3 = [
         "from peft import LoraConfig, get_peft_model\n"
         "t0 = time.time()\n"
         "model = AutoModelForCausalLM.from_pretrained(\n"
-        "    'google/gemma-2-2b', torch_dtype=torch.bfloat16, device_map='auto')\n"
+        "    'google/gemma-4-E2B-it', torch_dtype=torch.bfloat16, device_map='auto')\n"
         "print(f'load: {time.time()-t0:.1f}s')\n"
         "lora = LoraConfig(r=8, lora_alpha=16, lora_dropout=0.05, bias='none',\n"
         "                  task_type='CAUSAL_LM',\n"
@@ -286,7 +286,7 @@ nb3 = [
         "elapsed = time.time() - t0\n"
         "metrics = {\n"
         "  'hardware':'gpu', 'device': torch.cuda.get_device_name(0),\n"
-        "  'base_model':'google/gemma-2-2b', 'rank':8,\n"
+        "  'base_model':'google/gemma-4-E2B-it', 'rank':8,\n"
         "  'epochs':1, 'batch_size':4,\n"
         "  'dataset_rows': len(ds),\n"
         "  'train_time_sec': round(elapsed,2),\n"
@@ -330,7 +330,7 @@ nb4 = [
         "from vllm import LLM, SamplingParams\n"
         "import time\n"
         "t0 = time.time()\n"
-        "MODEL = 'google/gemma-2-2b'   # or local path: './out_tpu' / './out_gpu'\n"
+        "MODEL = 'google/gemma-4-E2B-it'   # or local path: './out_tpu' / './out_gpu'\n"
         "llm = LLM(model=MODEL, device=DEVICE, max_model_len=2048, seed=42, trust_remote_code=True)\n"
         "load_time = time.time() - t0\n"
         "print(f'load: {load_time:.1f}s')"
@@ -420,7 +420,7 @@ nb5 = [
         "devs = keras.distribution.list_devices()\n"
         "if devs and any('tpu' in d.lower() for d in devs):\n"
         "    keras.distribution.set_distribution(keras.distribution.DataParallel(devices=devs))\n"
-        "causal = keras_hub.models.CausalLM.from_preset('gemma2_2b_en')\n"
+        "causal = keras_hub.models.CausalLM.from_preset('gemma4_instruct_2b')\n"
         "causal.backbone.enable_lora(rank=8)\n"
         "# causal.fit(texts, batch_size=4, epochs=1)\n"
         "# causal.save_weights('out_tpu/lora.weights.h5')"

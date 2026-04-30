@@ -21,8 +21,9 @@ import {
 import { api } from "@/lib/api";
 
 const BASE_MODELS = [
-  "google/gemma-2-2b",
-  "google/gemma-2-9b",
+  "google/gemma-4-E2B-it",
+  "google/gemma-4-E4B-it",
+  "google/gemma-4-26B-A4B-it",
   "meta-llama/Llama-3.2-1B",
   "meta-llama/Llama-3.2-3B",
   "Qwen/Qwen2.5-1.5B",
@@ -48,8 +49,8 @@ export default function TrainingPage() {
     queryFn: api.listProjects,
   });
 
-  const [name, setName] = useState("gemma-2-2b-lora-tpu");
-  const [baseModel, setBaseModel] = useState("google/gemma-2-2b");
+  const [name, setName] = useState("gemma-4-e2b-lora-tpu");
+  const [baseModel, setBaseModel] = useState("google/gemma-4-E2B-it");
   const [hardware, setHardware] = useState<"tpu" | "gpu">("tpu");
   const [datasetId, setDatasetId] = useState(datasetIdFromQuery);
   const [rank, setRank] = useState(8);

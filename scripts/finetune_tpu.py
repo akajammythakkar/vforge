@@ -9,7 +9,7 @@ Why JAX/Keras here:
 
 Usage:
     python scripts/finetune_tpu.py \\
-        --model google/gemma-2-2b \\
+        --model google/gemma-4-E2B-it \\
         --data data/code.jsonl \\
         --rank 8 --epochs 1 --batch-size 4 \\
         --lr 1e-4 --max-seq-len 1024 \\
@@ -33,10 +33,13 @@ import numpy as np  # noqa: E402
 
 # Map common HF-style identifiers to the matching Keras Hub presets.
 HF_TO_PRESET = {
+    "google/gemma-4-E2B-it": "gemma4_instruct_2b",
+    "google/gemma-4-E4B-it": "gemma4_instruct_4b",
+    "google/gemma-4-26B-A4B-it": "gemma4_instruct_26b",
+    "google/gemma-4-31B-it": "gemma4_instruct_31b",
+    # Legacy Gemma 2 (kept for backward compat)
     "google/gemma-2-2b": "gemma2_2b_en",
     "google/gemma-2-9b": "gemma2_9b_en",
-    "google/gemma-2b": "gemma_2b_en",
-    "google/gemma-7b": "gemma_7b_en",
 }
 
 
