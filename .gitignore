@@ -1,0 +1,67 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+.npm
+.yarn/
+
+# Env & secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+*.pem
+*.key
+service-account*.json
+
+# DB
+*.db
+*.sqlite
+*.sqlite3
+postgres-data/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Models & artifacts (heavy)
+*.safetensors
+*.gguf
+*.bin
+*.ckpt
+checkpoints/
+models/local/
+runs/
+wandb/
+
+# Benchmark caches (keep results/ jsons committed)
+benchmarks/cache/
+benchmarks/charts/*.png
+!benchmarks/charts/.gitkeep
+
+# Logs
+logs/
+*.log
